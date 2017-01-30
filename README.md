@@ -1,6 +1,10 @@
 # MyBatch
 A Spring 4 Batch project to learn with. 
 
+## Partial log of the run: 
+
+* java -jar target/gs-batch-processing-0.1.0.jar
+
         2017-01-30 16:13:26.720  INFO 26352 --- [           main] o.s.jdbc.datasource.init.ScriptUtils     : Executing SQL script from URL [file:/Users/dqromney/projects/stg/MyBatch/target/classes/schema-all.sql]
         2017-01-30 16:13:26.723  INFO 26352 --- [           main] o.s.jdbc.datasource.init.ScriptUtils     : Executed SQL script from URL [file:/Users/dqromney/projects/stg/MyBatch/target/classes/schema-all.sql] in 3 ms.
         2017-01-30 16:13:27.068  INFO 26352 --- [           main] o.s.jdbc.datasource.init.ScriptUtils     : Executing SQL script from class path resource [org/springframework/batch/core/schema-hsqldb.sql]
