@@ -1,4 +1,4 @@
-package hello;
+package jobs.HelloJob;
 
 /**
  * Person object.

@@ -1,6 +1,9 @@
-package hello;
+package jobs.StocksJob;
 
 import config.DataSourceConfiguration;
+import jobs.HelloJob.JobCompletionNotificationListener;
+import jobs.HelloJob.Person;
+import jobs.HelloJob.PersonItemProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -22,14 +25,14 @@ import org.springframework.core.io.ClassPathResource;
 import javax.sql.DataSource;
 
 /**
- * Batch Configuration.
+ * Stock Data Batch Configuration.
  *
  * Created by dqromney on 1/30/17.
  */
 @Configuration
 @EnableBatchProcessing
 @Import({ DataSourceConfiguration.class })
-public class BatchConfiguration {
+public class StockDataBatchConfiguration {
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -40,19 +43,18 @@ public class BatchConfiguration {
     @Autowired
     public DataSource dataSource;
 
-    // tag::readerwriterprocessor[]
     @Bean
     public FlatFileItemReader<Person> reader() {
         FlatFileItemReader<Person> reader = new FlatFileItemReader<Person>();
-        reader.setResource(new ClassPathResource("sample-data.csv"));
-        reader.setLineMapper(new DefaultLineMapper<Person>() {{
-            setLineTokenizer(new DelimitedLineTokenizer() {{
-                setNames(new String[] { "firstName", "lastName" });
-            }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-                setTargetType(Person.class);
-            }});
-        }});
+//        reader.setResource(new ClassPathResource("sample-data.csv"));
+//        reader.setLineMapper(new DefaultLineMapper<Person>() {{
+//            setLineTokenizer(new DelimitedLineTokenizer() {{
+//                setNames(new String[] { "firstName", "lastName" });
+//            }});
+//            setFieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
+//                setTargetType(Person.class);
+//            }});
+//        }});
         return reader;
     }
 
@@ -64,9 +66,9 @@ public class BatchConfiguration {
     @Bean
     public JdbcBatchItemWriter<Person> writer() {
         JdbcBatchItemWriter<Person> writer = new JdbcBatchItemWriter<Person>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<Person>());
-        writer.setSql("INSERT INTO people (first_name, last_name) VALUES (:firstName, :lastName)");
-        writer.setDataSource(dataSource);
+//        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<Person>());
+//        writer.setSql("INSERT INTO people (first_name, last_name) VALUES (:firstName, :lastName)");
+//        writer.setDataSource(dataSource);
         return writer;
     }
     // end::readerwriterprocessor[]
@@ -74,7 +76,7 @@ public class BatchConfiguration {
     // tag::jobstep[]
     @Bean
     public Job importUserJob(JobCompletionNotificationListener listener) {
-        return jobBuilderFactory.get("importUserJob")
+        return jobBuilderFactory.get("importStockDataJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(step1())
@@ -92,4 +94,5 @@ public class BatchConfiguration {
                 .build();
     }
     // end::jobstep[]
+
 }
