@@ -1,9 +1,7 @@
 package hello;
 
-import javax.sql.DataSource;
-
+import config.DataSourceConfiguration;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -18,8 +16,10 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 /**
  * Batch Configuration.
@@ -28,6 +28,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @Configuration
 @EnableBatchProcessing
+@Import({ DataSourceConfiguration.class })
 public class BatchConfiguration {
 
     @Autowired

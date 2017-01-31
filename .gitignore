@@ -21,3 +21,6 @@ hs_err_pid*
 .idea/misc.xml
 .idea/modules.xml
 .idea/workspace.xml
+.idea/copyright/
+batch-processing.iml
+target/
