@@ -3,6 +3,7 @@ package config;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -22,8 +23,8 @@ public class DataSourceConfiguration {
 
     @Value("classpath:schema-mysql.sql")
     private Resource schemaMysqlScript;
-    @Value("classpath:schema-hsql.sql")
-    private Resource schemaHsqlScript;
+//    @Value("classpath:schema-hsql.sql")
+//    private Resource schemaHsqlScript;
 
 //    @Bean
 //    @Primary
@@ -42,13 +43,14 @@ public class DataSourceConfiguration {
     }
 
     @Bean
+    @Primary
     public DataSource mysqlDataSource() throws SQLException, ClassNotFoundException {
         final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new com.mysql.jdbc.Driver());
         dataSource.setUrl("jdbc:mysql://localhost:3306/dev?autoreconnect=true");
         dataSource.setUsername("root");
         dataSource.setPassword("");
-        DatabasePopulatorUtils.execute(databasePopulator(), dataSource);
+        DatabasePopulatorUtils.execute(databaseMysqlPopulator(), dataSource);
         return dataSource;
     }
 
@@ -57,7 +59,7 @@ public class DataSourceConfiguration {
         return new JdbcTemplate(dataSource);
     }
 
-    private DatabasePopulator databasePopulator() {
+    private DatabasePopulator databaseMysqlPopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(schemaMysqlScript);
         return populator;
