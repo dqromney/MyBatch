@@ -1,4 +1,4 @@
-package jobs.StocksJob;
+package com.stg.config.jobs.StocksJob;
 
 import java.util.Date;
 

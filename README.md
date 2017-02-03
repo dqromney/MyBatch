@@ -27,6 +27,6 @@ A Spring 4 Batch project to learn with.
         2017-01-30 16:13:27.426  INFO 26352 --- [           main] hello.JobCompletionNotificationListener  : Found <Person{lastName='DOE', firstName='JANE'}> in the database.
         2017-01-30 16:13:27.426  INFO 26352 --- [           main] hello.JobCompletionNotificationListener  : Found <Person{lastName='DOE', firstName='JOHN'}> in the database.
         2017-01-30 16:13:27.428  INFO 26352 --- [           main] o.s.b.c.l.support.SimpleJobLauncher      : Job: [FlowJob: [name=importUserJob]] completed with the following parameters: [{run.id=1}] and the following status: [COMPLETED]
-        2017-01-30 16:13:27.429  INFO 26352 --- [           main] hello.Application                        : Started Application in 2.197 seconds (JVM running for 2.616)
+        2017-01-30 16:13:27.429  INFO 26352 --- [           main] com.stg.Application                        : Started Application in 2.197 seconds (JVM running for 2.616)
         2017-01-30 16:13:27.430  INFO 26352 --- [       Thread-2] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@3d0f8e03: startup date [Mon Jan 30 16:13:25 MST 2017]; root of context hierarchy
         2017-01-30 16:13:27.430  INFO 26352 --- [       Thread-2] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown

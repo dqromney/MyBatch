@@ -1,4 +1,4 @@
-package hello;
+package com.stg;
 
 
 import org.springframework.boot.SpringApplication;

@@ -1,4 +1,4 @@
-package jobs.HelloJob;
+package com.stg.config.jobs.HelloJob;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

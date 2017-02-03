@@ -1,4 +1,4 @@
-package jobs.HelloJob;
+package com.stg.config.jobs.HelloJob;
 
 /**
  * Person object.

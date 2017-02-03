@@ -1,6 +1,6 @@
-package jobs.HelloJob;
+package com.stg.config.jobs.HelloJob;
 
-import config.DataSourceConfiguration;
+import com.stg.config.DataSourceConfiguration;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
