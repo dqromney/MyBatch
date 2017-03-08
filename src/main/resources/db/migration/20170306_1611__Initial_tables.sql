@@ -1,11 +1,3 @@
-DROP TABLE people IF EXISTS;
-
-CREATE TABLE people  (
-    person_id BIGINT IDENTITY NOT NULL PRIMARY KEY,
-    first_name VARCHAR(20),
-    last_name VARCHAR(20)
-);
-
 -- CREATE SCHEMA `quotes` DEFAULT CHARACTER SET utf8 ;
 DROP TABLE ticker IF EXISTS;
 CREATE TABLE ticker

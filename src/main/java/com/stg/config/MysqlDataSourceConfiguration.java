@@ -19,23 +19,11 @@ import java.sql.SQLException;
  *
  * Created by dqromney on 1/30/17.
  */
-public class DataSourceConfiguration {
+
+public class MysqlDataSourceConfiguration {
 
     @Value("classpath:schema-mysql.sql")
-    private Resource schemaMysqlScript;
-//    @Value("classpath:schema-hsql.sql")
-//    private Resource schemaHsqlScript;
-
-//    @Bean
-//    @Primary
-//    public DataSource hsqldbDataSource() throws SQLException {
-//        final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-//        dataSource.setDriver(new org.hsqldb.jdbcDriver());
-//        dataSource.setUrl("jdbc:hsqldb:mem:mydb");
-//        dataSource.setUsername("sa");
-//        dataSource.setPassword("");
-//        return dataSource;
-//    }
+    private Resource schemaScript;
 
     @Bean
     public JdbcTemplate jdbcTemplate(final DataSource dataSource) {
@@ -47,10 +35,12 @@ public class DataSourceConfiguration {
     public DataSource mysqlDataSource() throws SQLException, ClassNotFoundException {
         final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new com.mysql.jdbc.Driver());
-        dataSource.setUrl("jdbc:mysql://localhost:3306/dev?autoreconnect=true");
+         dataSource.setUrl("jdbc:mysql://localhost:3306/quotes?autoreconnect=true");
+//        dataSource.setUrl("jdbc:mysql://192.168.0.40:3306/quotes?autoreconnect=true");
         dataSource.setUsername("root");
-        dataSource.setPassword("");
-        DatabasePopulatorUtils.execute(databaseMysqlPopulator(), dataSource);
+        // dataSource.setPassword("");
+        dataSource.setPassword("iag15501");
+        DatabasePopulatorUtils.execute(databasePopulator(), dataSource);
         return dataSource;
     }
 
@@ -59,9 +49,9 @@ public class DataSourceConfiguration {
         return new JdbcTemplate(dataSource);
     }
 
-    private DatabasePopulator databaseMysqlPopulator() {
+    private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(schemaMysqlScript);
+        populator.addScript(schemaScript);
         return populator;
     }
 }
