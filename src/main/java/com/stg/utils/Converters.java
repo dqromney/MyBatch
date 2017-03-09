@@ -14,6 +14,9 @@ public class Converters {
 
     public static Long strToLong(String s) {
         Long n;
+        if (s.isEmpty()) {
+            return new Long(0);
+        }
         if (s.contains(".")) {
             Double d = new Double(s);
             n = d.longValue();
