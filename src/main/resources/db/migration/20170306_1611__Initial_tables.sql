@@ -33,14 +33,14 @@ CREATE TABLE data
     high DOUBLE,
     low DOUBLE,
     close DOUBLE,
-    volume INT(11),
+    volume INT(15),
     ex_dividend DOUBLE,
     split_ratio DOUBLE,
     adj_open DOUBLE,
     adj_high DOUBLE,
     adj_low DOUBLE,
     adj_close DOUBLE,
-    adj_volume INT(11)
+    adj_volume INT(15)
 );
 CREATE INDEX data_date_index ON data (date);
 CREATE UNIQUE INDEX data_id_uindex ON data (id);
