@@ -21,7 +21,7 @@ public class DataFieldSetMapper<D> implements FieldSetMapper<Data> {
     public Data mapFieldSet(FieldSet fieldSet) throws BindException {
         Data data = Data.builder()
                 .symbol(fieldSet.readString("symbol"))
-                .date(fieldSet.readDate("date", "yyy-MM-dd"))
+                .date(fieldSet.readDate("date"))
                 .open(fieldSet.readBigDecimal("open"))
                 .high(fieldSet.readBigDecimal("high"))
                 .low(fieldSet.readBigDecimal("low"))

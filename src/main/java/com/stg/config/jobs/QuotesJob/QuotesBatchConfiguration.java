@@ -48,9 +48,9 @@ import java.util.zip.ZipInputStream;
  * <p>
  * Created by dqromney on 1/30/17.
  */
+@Log
 @Configuration
 @EnableBatchProcessing
-@Log
 //@Import({ MysqlDataSourceConfiguration.class })
 public class QuotesBatchConfiguration {
 
@@ -86,7 +86,7 @@ public class QuotesBatchConfiguration {
         return stepBuilderFactory.get("downloadStep")
                 .tasklet((contribution, chunkContext) -> {
                     download = getDatatableBuildDownload();
-                    log.info(download.toString());
+                    // log.info(download.toString());
                     Download.downloadUsingNIO(download.getLink(), targetDirectory + download.getZipFileName());
                     return RepeatStatus.FINISHED;
                 }).build();
@@ -211,7 +211,7 @@ public class QuotesBatchConfiguration {
         JdbcBatchItemWriter<Data> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setSql("INSERT INTO data (symbol, date, open, high, low, close, volume, ex_dividend, split_ratio, adj_open, adj_high, adj_low, adj_close, adj_volume) " +
-                "VALUES (:symbol, date, :open, :high, :low , :close , :volume , :exDividend, :splitRatio, :adjOpen , :adjHigh , :adjLow , :adjClose , :adjVolume )");
+                "VALUES (:symbol, :date, :open, :high, :low , :close , :volume , :exDividend, :splitRatio, :adjOpen , :adjHigh , :adjLow , :adjClose , :adjVolume )");
         writer.setDataSource(dataSource);
         return writer;
     }

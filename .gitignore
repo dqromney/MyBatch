@@ -25,3 +25,4 @@ hs_err_pid*
 batch-processing.iml
 target/
 /wiki-20170307.zip
+.idea/

@@ -27,21 +27,21 @@ DROP TABLE data IF EXISTS;
 CREATE TABLE data
 (
     id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    ticker VARCHAR(20),
-    -- ticker_id INT(11),
+    symbol VARCHAR(20),
+    date DATE,
     open DOUBLE,
     high DOUBLE,
     low DOUBLE,
     close DOUBLE,
+    volume INT(11),
     ex_dividend DOUBLE,
     split_ratio DOUBLE,
-    volume INT(11),
     adj_open DOUBLE,
     adj_high DOUBLE,
     adj_low DOUBLE,
     adj_close DOUBLE,
-    adj_volume INT(11),
---     CONSTRAINT data_ticker_id_fk FOREIGN KEY (ticker_id) REFERENCES ticker (id) ON DELETE CASCADE
+    adj_volume INT(11)
 );
+CREATE INDEX data_date_index ON data (date);
 CREATE UNIQUE INDEX data_id_uindex ON data (id);
--- CREATE INDEX data_ticker_id_fk ON data (ticker_id);
+CREATE INDEX data_symbol_index ON data (symbol);
