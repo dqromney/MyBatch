@@ -1,4 +1,4 @@
-package com.stg.model;
+package com.stg.dto;
 
 import lombok.Builder;
 
@@ -13,6 +13,7 @@ import java.util.Date;
 @lombok.Data
 @Builder
 public class Data {
+    String symbol;
     Date date;
     BigDecimal open;
     BigDecimal high;
