@@ -2,12 +2,12 @@
 DROP TABLE ticker IF EXISTS;
 CREATE TABLE ticker
 (
-    id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    id BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     shared_id INT(11),
     dataset_code VARCHAR(30),
     database_code VARCHAR(50),
-    name VARCHAR(25),
-    description VARCHAR(4096),
+    name TEXT,
+    description LONGTEXT,
     refreshed_at DATETIME,
     newest_available_date DATE,
     oldest_available_date DATE,
@@ -15,11 +15,7 @@ CREATE TABLE ticker
     frequency VARCHAR(30),
     type VARCHAR(25),
     premium TINYINT(1),
-    `limit` INT(11),
-    transform VARCHAR(50),
-    column_index INT(11),
-    start_date DATE,
-    end_date DATE
+    database_id BIGINT(20)
 );
 CREATE UNIQUE INDEX ticker_id_uindex ON ticker (id);
 

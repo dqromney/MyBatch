@@ -3,6 +3,7 @@ package com.stg.config.jobs.QuotesJob;
 import com.stg.config.jobs.JobCompletionNotificationListener;
 import com.stg.dto.Data;
 import com.stg.dto.DatatableBuildDownload;
+import com.stg.dto.Ticker;
 import com.stg.factory.Webservice;
 import com.stg.factory.WebserviceFactory;
 import com.stg.utils.Download;
@@ -17,6 +18,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -26,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -73,9 +76,10 @@ public class QuotesBatchConfiguration {
         return jobBuilderFactory.get("processEodJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(downloadStep())
-                .next(decompressStep())
-                .next(importDataStep())
+//                .flow(downloadStep())
+//                .next(decompressStep())
+//                .next(importDataStep())
+                .flow(tickerMetaDataStep())
                 .next(cleanupStep())
                 .end()
                 .build();
@@ -86,7 +90,7 @@ public class QuotesBatchConfiguration {
         return stepBuilderFactory.get("downloadStep")
                 .tasklet((contribution, chunkContext) -> {
                     download = getDatatableBuildDownload();
-                    // log.info(download.toString());
+                    log.info(download.toString());
                     Download.downloadUsingNIO(download.getLink(), targetDirectory + download.getZipFileName());
                     return RepeatStatus.FINISHED;
                 }).build();
@@ -135,49 +139,20 @@ public class QuotesBatchConfiguration {
     @Bean
     public Step importDataStep() {
         return stepBuilderFactory.get("importDataStep")
-                .<Data, Data>chunk(10)
-                .reader(reader())
-                .processor(processor())
-                .writer(writer())
+                .<Data, Data>chunk(500)
+                .reader(importDataReader())
+                .processor(importDataProcessor())
+                .writer(importDataWriter())
                 .build();
     }
 
     @Bean
-    public Step cleanupStep() {
-        return stepBuilderFactory.get("cleanupStep")
-                .tasklet((contribution, chunkContext) -> {
-                    System.out.println("Cleanup task executing...");
-                    if (download != null) {
-                        File zipFile = new File(targetDirectory, download.getZipFileName());
-                        File csvFile = new File(targetDirectory, download.getCsvFileName());
-
-//                    if (csvFile.exists()) {
-//                        if (csvFile.delete()) {
-                        log.info(String.format("CSV file removed: [%1$s]", csvFile.toString()));
-//                        } else {
-//                            log.warning(String.format("Error CSV file NOT removed: [%1$s]", csvFile.toString()));
-//                        }
-//                    }
-
-//                    if (zipFile.exists()) {
-//                        if (zipFile.delete()) {
-                        log.info(String.format("ZIP file removed: [%1$s]", zipFile.toString()));
-//                        } else {
-//                            log.warning(String.format("Error ZIP file NOT removed: [%1$s]", zipFile.toString()));
-//                        }
-//                    }
-                    }
-                    return RepeatStatus.FINISHED;
-                }).build();
+    public ImportDataFieldSetMapper<Data> importDataFieldSetMapper() {
+        return new ImportDataFieldSetMapper<Data>();
     }
 
     @Bean
-    public DataFieldSetMapper<Data> dataDataFieldSetMapper() {
-        return new DataFieldSetMapper<Data>();
-    }
-
-    @Bean
-    public FlatFileItemReader<Data> reader() {
+    public FlatFileItemReader<Data> importDataReader() {
         FlatFileItemReader<Data> reader = new FlatFileItemReader<>();
         DatatableBuildDownload download = DatatableBuildDownload.builder()
                 .zipFileName("WIKI_PRICES_212b326a081eacca455e13140d7bb9db.zip")
@@ -192,7 +167,7 @@ public class QuotesBatchConfiguration {
                             "exDividend", "splitRatio",
                             "adjOpen", "adjHigh", "adjLow", "adjClose", "adjVolume"});
                 }});
-                setFieldSetMapper(new DataFieldSetMapper<Data>() {{
+                setFieldSetMapper(new ImportDataFieldSetMapper<Data>() {{
                     // setTargetType(Data.class);
                 }});
             }});
@@ -202,18 +177,82 @@ public class QuotesBatchConfiguration {
     }
 
     @Bean
-    public DataItemProcessor processor() {
-        return new DataItemProcessor();
+    public ImportDataItemProcessor importDataProcessor() {
+        return new ImportDataItemProcessor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<Data> writer() {
+    public JdbcBatchItemWriter<Data> importDataWriter() {
         JdbcBatchItemWriter<Data> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setSql("INSERT INTO data (symbol, date, open, high, low, close, volume, ex_dividend, split_ratio, adj_open, adj_high, adj_low, adj_close, adj_volume) " +
                 "VALUES (:symbol, :date, :open, :high, :low , :close , :volume , :exDividend, :splitRatio, :adjOpen , :adjHigh , :adjLow , :adjClose , :adjVolume )");
         writer.setDataSource(dataSource);
         return writer;
+    }
+
+    @Bean
+    public Step tickerMetaDataStep() {
+        return stepBuilderFactory.get("tickerMetaDataStep")
+                .<Ticker, Ticker>chunk(10)
+                .reader(tickerMetaReader())
+                .processor(tickerMetaProcessor())
+                .writer(tickerMetaWriter())
+                .build();
+    }
+
+    @Bean
+    public JdbcCursorItemReader<Ticker> tickerMetaReader() {
+        JdbcCursorItemReader<Ticker> dbReader = new JdbcCursorItemReader<>();
+        String query = "select distinct symbol as datasetCode from data";
+        dbReader.setDataSource(dataSource);
+        dbReader.setSql(query);
+        dbReader.setRowMapper(new BeanPropertyRowMapper<>(Ticker.class));
+        return dbReader;
+    }
+
+    @Bean
+    public TickerMetaItemProcessor tickerMetaProcessor() {
+        return new TickerMetaItemProcessor();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<Ticker> tickerMetaWriter() {
+        JdbcBatchItemWriter<Ticker> writer = new JdbcBatchItemWriter<>();
+        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+        writer.setSql("INSERT INTO ticker (shared_id, dataset_code, database_code, name, description, refreshed_at, newest_available_date, oldest_available_date, column_names, frequency, type, premium, database_id) " +
+                "VALUES (:sharedId, :datasetCode, :databaseCode, :name, :description, :refreshedAt, :newestAvailableDate, :oldestAvailableDate, :columnNames, :frequency, :type, :premium, :databaseId)");
+        writer.setDataSource(dataSource);
+        return writer;
+    }
+
+    @Bean
+    public Step cleanupStep() {
+        return stepBuilderFactory.get("cleanupStep")
+                .tasklet((contribution, chunkContext) -> {
+                    System.out.println("Cleanup task executing...");
+//                    if (download != null) {
+//                        File zipFile = new File(targetDirectory, download.getZipFileName());
+//                        File csvFile = new File(targetDirectory, download.getCsvFileName());
+//
+//                        if (csvFile.exists()) {
+//                            if (csvFile.delete()) {
+//                                log.info(String.format("CSV file removed: [%1$s]", csvFile.toString()));
+//                            } else {
+//                                log.warning(String.format("Error CSV file NOT removed: [%1$s]", csvFile.toString()));
+//                            }
+//                        }
+//
+//                        if (zipFile.exists()) {
+//                            if (zipFile.delete()) {
+//                                log.info(String.format("ZIP file removed: [%1$s]", zipFile.toString()));
+//                            } else {
+//                                log.warning(String.format("Error ZIP file NOT removed: [%1$s]", zipFile.toString()));
+//                            }
+//                        }
+//                    }
+                    return RepeatStatus.FINISHED;
+                }).build();
     }
 
     // ----------------------------------------------------------------

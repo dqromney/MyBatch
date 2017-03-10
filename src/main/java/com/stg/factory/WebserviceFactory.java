@@ -6,6 +6,7 @@ import static com.stg.factory.Webservice.QUANDL_DATABASE_V3;
 import static com.stg.factory.Webservice.QUANDL_DATATABLE_V3;
 import static com.stg.factory.Webservice.WIKI_EOD_FILE_V3;
 import static com.stg.factory.Webservice.WIKI_EOD_V3;
+import static com.stg.factory.Webservice.WIKI_META_V3;
 
 /**
  * Data Source Factory.
@@ -21,6 +22,9 @@ public class WebserviceFactory {
         }
         if (pWebService.equalsIgnoreCase(WIKI_EOD_V3)) {
             return new WikiV3Eod();
+        }
+        if (pWebService.equalsIgnoreCase(WIKI_META_V3)) {
+            return new WikiV3Meta();
         }
         if (pWebService.equalsIgnoreCase(WIKI_EOD_FILE_V3)) {
             return new WikiFileEodV3();

@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Wiki End of Day Quotes Web Service.
  *
+ * https://www.quandl.com/api/v3/datasets/WIKI/AAPL/metadata.json?api_key={{api-key}}
+ *
  * Created by dqromney on 2/20/17.
  */
 @Slf4j
-public class WikiV3Eod implements Webservice {
+public class WikiV3Meta implements Webservice {
 
     @Override
     public String getSource() {
