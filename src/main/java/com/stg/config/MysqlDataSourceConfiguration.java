@@ -35,11 +35,11 @@ public class MysqlDataSourceConfiguration {
     public DataSource mysqlDataSource() throws SQLException, ClassNotFoundException {
         final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new com.mysql.jdbc.Driver());
-        dataSource.setUrl("jdbc:mysql://localhost:3306/quotes?autoreconnect=true&useSSL=false");
-        // dataSource.setUrl("jdbc:mysql://192.168.0.40:3306/quotes?autoreconnect=true");
+        // dataSource.setUrl("jdbc:mysql://localhost:3306/quotes?autoreconnect=true&useSSL=false");
+        dataSource.setUrl("jdbc:mysql://192.168.0.40:3306/quotes?autoreconnect=true");
         dataSource.setUsername("root");
-        dataSource.setPassword("");
-        // dataSource.setPassword("iag15501");
+        // dataSource.setPassword("");
+        dataSource.setPassword("iag15501");
         DatabasePopulatorUtils.execute(databasePopulator(), dataSource);
         return dataSource;
     }

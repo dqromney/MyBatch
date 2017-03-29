@@ -135,7 +135,7 @@ public class QuotesBatchConfiguration {
     @Bean
     public Step importDataStep() {
         return stepBuilderFactory.get("importDataStep")
-                .<Data, Data>chunk(10)
+                .<Data, Data>chunk(500)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -213,6 +213,7 @@ public class QuotesBatchConfiguration {
         writer.setSql("INSERT INTO data (symbol, date, open, high, low, close, volume, ex_dividend, split_ratio, adj_open, adj_high, adj_low, adj_close, adj_volume) " +
                 "VALUES (:symbol, :date, :open, :high, :low , :close , :volume , :exDividend, :splitRatio, :adjOpen , :adjHigh , :adjLow , :adjClose , :adjVolume )");
         writer.setDataSource(dataSource);
+        System.out.print(".");
         return writer;
     }
 
