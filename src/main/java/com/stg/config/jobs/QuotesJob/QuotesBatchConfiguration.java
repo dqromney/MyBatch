@@ -3,6 +3,7 @@ package com.stg.config.jobs.QuotesJob;
 import com.stg.config.jobs.JobCompletionNotificationListener;
 import com.stg.dto.Data;
 import com.stg.dto.DatatableBuildDownload;
+import com.stg.dto.Ticker;
 import com.stg.factory.Webservice;
 import com.stg.factory.WebserviceFactory;
 import com.stg.utils.Download;
@@ -17,6 +18,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -26,19 +28,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 import javax.sql.DataSource;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.ZipInputStream;
@@ -76,7 +73,7 @@ public class QuotesBatchConfiguration {
                 .flow(downloadStep())
                 .next(decompressStep())
                 .next(importDataStep())
-                .flow(tickerMetaDataStep())
+                .next(tickerMetaDataStep())
                 .next(cleanupStep())
                 .end()
                 .build();
@@ -137,9 +134,9 @@ public class QuotesBatchConfiguration {
     public Step importDataStep() {
         return stepBuilderFactory.get("importDataStep")
                 .<Data, Data>chunk(10)
-                .reader(reader())
-                .processor(processor())
-                .writer(writer())
+                .reader(importDataReader())
+                .processor(importDataProcessor())
+                .writer(importDataWriter())
                 .build();
     }
 
