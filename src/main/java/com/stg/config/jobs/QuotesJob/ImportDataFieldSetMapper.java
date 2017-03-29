@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  * Created by dqromney on 3/8/17.
  */
-public class DataFieldSetMapper<D> implements FieldSetMapper<Data> {
+public class ImportDataFieldSetMapper<D> implements FieldSetMapper<Data> {
     /**
      * Method used to map data obtained from a {@link FieldSet} into an object.
      *
@@ -22,26 +22,21 @@ public class DataFieldSetMapper<D> implements FieldSetMapper<Data> {
      */
     @Override
     public Data mapFieldSet(FieldSet fieldSet) throws BindException {
-
-        String symbol = fieldSet.readString("symbol");
-        Long volume = Converters.strToLong(fieldSet.readString("volume"));
-        Long adjVolume = Converters.strToLong(fieldSet.readString("adjVolume"));
-
         Data data = Data.builder()
-                .symbol(symbol)
+                .symbol(fieldSet.readString("symbol"))
                 .date(fieldSet.readDate("date"))
                 .open(fieldSet.readBigDecimal("open", new BigDecimal(0.0)))
                 .high(fieldSet.readBigDecimal("high", new BigDecimal(0.0)))
                 .low(fieldSet.readBigDecimal("low", new BigDecimal(0.0)))
                 .close(fieldSet.readBigDecimal("close", new BigDecimal(0.0)))
-                .volume(volume)
+                .volume(Converters.strToLong(fieldSet.readString("volume")))
                 .exDividend(fieldSet.readBigDecimal("exDividend", new BigDecimal(0.0)))
                 .splitRatio(fieldSet.readBigDecimal("splitRatio", new BigDecimal(0.0)))
                 .adjOpen(fieldSet.readBigDecimal("adjOpen", new BigDecimal(0.0)))
                 .adjHigh(fieldSet.readBigDecimal("adjHigh", new BigDecimal(0.0)))
                 .adjLow(fieldSet.readBigDecimal("adjLow", new BigDecimal(0.0)))
                 .adjClose(fieldSet.readBigDecimal("adjClose", new BigDecimal(0.0)))
-                .adjVolume(adjVolume)
+                .adjVolume(Converters.strToLong(fieldSet.readString("adjVolume")))
                 .build();
         return data;
     }

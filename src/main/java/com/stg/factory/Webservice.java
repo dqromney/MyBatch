@@ -11,6 +11,7 @@ public interface Webservice {
 
     public static final String WIKI_EOD_FILE_V3 = "WIKI_EOD_FILE_V3";
     public static final String WIKI_EOD_V3 = "WIKI_EOD_V3";
+    public static final String WIKI_META_V3 = "WIKI_META_V3";
     public static final String QUANDL_DATABASE_V3 = "QUANDL_DATABASE_V3";
     public static final String QUANDL_DATATABLE_V3 = "QUANDL_DATATABLE_V3";
 
