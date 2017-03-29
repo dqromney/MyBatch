@@ -15,6 +15,8 @@ import java.util.Enumeration;
 /**
  * Job Launcher Controller.
  *
+ * ex. http://localhost:8080/jobLauncher?job=processEodJob
+ *
  * Created by dqromney on 3/28/17.
  */
 public class JobLauncherController {
